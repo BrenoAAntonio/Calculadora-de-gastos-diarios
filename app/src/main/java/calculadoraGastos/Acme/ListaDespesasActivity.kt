@@ -8,26 +8,60 @@ import calculadoraGastos.Acme.adapter.DespesaAdapter
 import calculadoraGastos.Acme.data.AppDatabase
 import android.content.Intent
 import android.widget.Button
+import android.widget.Toast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ListaDespesasActivity : AppCompatActivity() {
+
+    private lateinit var adapter: DespesaAdapter
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_despesas)
 
+        db = AppDatabase.getDatabase(this)
+
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewDespesas)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val despesas = AppDatabase.getDatabase(this).despesaDao().buscarTodasDespesas()
+        adapter = DespesaAdapter(
+            emptyList(),
+            onDespesaClick = { despesa ->
+            },
+            onDespesaDelete = { despesa ->
+                GlobalScope.launch(Dispatchers.IO) {
+                    db.despesaDao().deletarDespesa(despesa)
+                    runOnUiThread {
+                        Toast.makeText(
+                            this@ListaDespesasActivity,
+                            "Despesa removida",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        carregarDespesas()
+                    }
+                }
+            }
+        )
 
-        val adapter = DespesaAdapter(despesas)
         recyclerView.adapter = adapter
 
-        val btnVoltarMenu = findViewById<Button>(R.id.btnVoltarMenu)
-        btnVoltarMenu.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+        findViewById<Button>(R.id.btnVoltarMenu).setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
+        }
+
+        carregarDespesas()
+    }
+
+    private fun carregarDespesas() {
+        GlobalScope.launch(Dispatchers.IO) {
+            val despesas = db.despesaDao().buscarTodasDespesas()
+            runOnUiThread {
+                adapter.atualizarLista(despesas)
+            }
         }
     }
 }
