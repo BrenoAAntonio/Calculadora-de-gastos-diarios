@@ -1,14 +1,14 @@
 package calculadoraGastos.Acme
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import calculadoraGastos.Acme.adapter.DespesaAdapter
 import calculadoraGastos.Acme.data.AppDatabase
-import android.content.Intent
-import android.widget.Button
-import android.widget.Toast
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,12 +45,25 @@ class ListaDespesasActivity : AppCompatActivity() {
                 }
             }
         )
-
         recyclerView.adapter = adapter
 
-        findViewById<Button>(R.id.btnVoltarMenu).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNav.selectedItemId = R.id.menu_list
+
+        bottomNav.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.menu_home -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.menu_calculator -> {
+                    startActivity(Intent(this, RegistrarDespesaActivity::class.java))
+                    finish()
+                    true
+                }
+                else -> false
+            }
         }
 
         carregarDespesas()

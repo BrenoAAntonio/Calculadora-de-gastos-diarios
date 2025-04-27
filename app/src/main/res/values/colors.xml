@@ -12,4 +12,5 @@
     <color name="green_medium">#388E3C</color>
     <color name="text_primary">#212121</color>
     <color name="text_secondary">#757575</color>
+    <color name="buttonColor">#4CAF50</color>
 </resources>

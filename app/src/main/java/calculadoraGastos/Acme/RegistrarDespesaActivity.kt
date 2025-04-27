@@ -1,15 +1,16 @@
 package calculadoraGastos.Acme
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import calculadoraGastos.Acme.data.AppDatabase
 import calculadoraGastos.Acme.data.Despesa
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.*
-import android.content.Intent
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,6 +33,25 @@ class RegistrarDespesaActivity : AppCompatActivity() {
         val db = AppDatabase.getDatabase(this)
         val despesaDao = db.despesaDao()
 
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNav.selectedItemId = R.id.menu_calculator
+
+        bottomNav.setOnNavigationItemSelectedListener { item ->
+            if (item.itemId != bottomNav.selectedItemId) {
+                when (item.itemId) {
+                    R.id.menu_home -> {
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    }
+                    R.id.menu_list -> {
+                        startActivity(Intent(this, ListaDespesasActivity::class.java))
+                        finish()
+                    }
+                }
+            }
+            true
+        }
+
         btnRegistrarDespesa.setOnClickListener {
             val nome = edtNomeDespesa.text.toString().trim()
             val valorTexto = edtValorDespesa.text.toString().trim()
@@ -42,11 +62,15 @@ class RegistrarDespesaActivity : AppCompatActivity() {
                     val valor = valorTexto.toDouble()
                     val dataAtual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
-                    val novaDespesa = Despesa(nome = nome, valor = valor, categoria = categoria, data = dataAtual)
+                    val novaDespesa = Despesa(
+                        nome = nome,
+                        valor = valor,
+                        categoria = categoria,
+                        data = dataAtual
+                    )
 
                     lifecycleScope.launch(Dispatchers.IO) {
                         despesaDao.inserirDespesa(novaDespesa)
-
                         withContext(Dispatchers.Main) {
                             Toast.makeText(
                                 this@RegistrarDespesaActivity,
@@ -63,13 +87,6 @@ class RegistrarDespesaActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
             }
-        }
-
-        val btnVoltarMenu: Button = findViewById(R.id.btnVoltarMenu)
-        btnVoltarMenu.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
         }
     }
 }
