@@ -11,3 +11,8 @@ data class Despesa(
     val categoria: String,
     val data: String
 )
+
+data class CategoriaTotal(
+    val categoria: String,
+    val total: Double
+)

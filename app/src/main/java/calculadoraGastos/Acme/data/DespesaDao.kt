@@ -12,4 +12,7 @@ interface DespesaDao {
 
     @Delete
     fun deletarDespesa(despesa: Despesa)
+
+    @Query("SELECT categoria, SUM(valor) as total FROM despesas GROUP BY categoria")
+    fun buscarTotalPorCategoria(): List<CategoriaTotal>
 }

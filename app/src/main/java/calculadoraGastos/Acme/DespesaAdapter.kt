@@ -13,7 +13,8 @@ import calculadoraGastos.Acme.data.Despesa
 class DespesaAdapter(
     private var listaDespesas: List<Despesa>,
     private val onDespesaClick: (Despesa) -> Unit = {},
-    private val onDespesaDelete: (Despesa) -> Unit = {}
+    private val onDespesaDelete: (Despesa) -> Unit = {},
+    private val mostrarBotaoExcluir: Boolean = true
 ) : RecyclerView.Adapter<DespesaAdapter.DespesaViewHolder>() {
 
     inner class DespesaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -50,7 +51,13 @@ class DespesaAdapter(
             cardIcone.setCardBackgroundColor(android.graphics.Color.parseColor(color))
 
             itemView.setOnClickListener { onDespesaClick(despesa) }
-            btnRemover.setOnClickListener { onDespesaDelete(despesa) }
+
+            if (mostrarBotaoExcluir) {
+                btnRemover.visibility = View.VISIBLE
+                btnRemover.setOnClickListener { onDespesaDelete(despesa) }
+            } else {
+                btnRemover.visibility = View.GONE
+            }
         }
     }
 
