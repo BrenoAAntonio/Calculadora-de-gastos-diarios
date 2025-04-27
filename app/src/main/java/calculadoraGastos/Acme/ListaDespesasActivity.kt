@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import calculadoraGastos.Acme.adapter.DespesaAdapter
 import calculadoraGastos.Acme.data.AppDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -29,8 +30,7 @@ class ListaDespesasActivity : AppCompatActivity() {
 
         adapter = DespesaAdapter(
             emptyList(),
-            onDespesaClick = { despesa ->
-            },
+            onDespesaClick = { despesa ->},
             onDespesaDelete = { despesa ->
                 GlobalScope.launch(Dispatchers.IO) {
                     db.despesaDao().deletarDespesa(despesa)
@@ -57,13 +57,20 @@ class ListaDespesasActivity : AppCompatActivity() {
                     finish()
                     true
                 }
+                R.id.menu_list -> {
+                    true
+                }
                 R.id.menu_calculator -> {
-                    startActivity(Intent(this, RegistrarDespesaActivity::class.java))
+                    startActivity(Intent(this, CalculadoraActivity::class.java))
                     finish()
                     true
                 }
                 else -> false
             }
+        }
+
+        findViewById<FloatingActionButton>(R.id.fabAddDespesa).setOnClickListener {
+            startActivity(Intent(this, RegistrarDespesaActivity::class.java))
         }
 
         carregarDespesas()

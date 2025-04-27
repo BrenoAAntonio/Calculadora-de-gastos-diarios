@@ -67,13 +67,14 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_calculator -> {
-                    startActivity(Intent(this, RegistrarDespesaActivity::class.java))
+                    startActivity(Intent(this, CalculadoraActivity::class.java))
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                     true
                 }
                 else -> false
             }
         }
+
 
         findViewById<FloatingActionButton>(R.id.fabAddDespesa).setOnClickListener {
             val intent = Intent(this, RegistrarDespesaActivity::class.java)

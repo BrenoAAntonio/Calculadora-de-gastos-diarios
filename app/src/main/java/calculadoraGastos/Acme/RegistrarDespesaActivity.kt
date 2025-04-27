@@ -34,22 +34,26 @@ class RegistrarDespesaActivity : AppCompatActivity() {
         val despesaDao = db.despesaDao()
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNav.selectedItemId = R.id.menu_calculator
 
         bottomNav.setOnNavigationItemSelectedListener { item ->
-            if (item.itemId != bottomNav.selectedItemId) {
-                when (item.itemId) {
-                    R.id.menu_home -> {
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
-                    }
-                    R.id.menu_list -> {
-                        startActivity(Intent(this, ListaDespesasActivity::class.java))
-                        finish()
-                    }
+            when (item.itemId) {
+                R.id.menu_home -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                    true
                 }
+                R.id.menu_list -> {
+                    startActivity(Intent(this, ListaDespesasActivity::class.java))
+                    finish()
+                    true
+                }
+                R.id.menu_calculator -> {
+                    startActivity(Intent(this, CalculadoraActivity::class.java))
+                    finish()
+                    true
+                }
+                else -> false
             }
-            true
         }
 
         btnRegistrarDespesa.setOnClickListener {
