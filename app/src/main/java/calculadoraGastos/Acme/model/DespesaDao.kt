@@ -1,4 +1,4 @@
-package calculadoraGastos.Acme.data
+package calculadoraGastos.Acme.model
 
 import androidx.room.*
 

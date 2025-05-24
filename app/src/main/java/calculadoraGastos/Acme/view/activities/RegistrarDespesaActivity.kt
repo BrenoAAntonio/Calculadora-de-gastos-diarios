@@ -1,12 +1,13 @@
-package calculadoraGastos.Acme
+package calculadoraGastos.Acme.view.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import calculadoraGastos.Acme.data.AppDatabase
-import calculadoraGastos.Acme.data.Despesa
+import calculadoraGastos.Acme.R
+import calculadoraGastos.Acme.database.AppDatabase
+import calculadoraGastos.Acme.model.Despesa
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat

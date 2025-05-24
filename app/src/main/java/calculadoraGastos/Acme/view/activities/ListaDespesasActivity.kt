@@ -1,4 +1,4 @@
-package calculadoraGastos.Acme
+package calculadoraGastos.Acme.view.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,8 +6,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import calculadoraGastos.Acme.adapter.DespesaAdapter
-import calculadoraGastos.Acme.data.AppDatabase
+import calculadoraGastos.Acme.R
+import calculadoraGastos.Acme.view.adapters.DespesaAdapter
+import calculadoraGastos.Acme.database.AppDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers

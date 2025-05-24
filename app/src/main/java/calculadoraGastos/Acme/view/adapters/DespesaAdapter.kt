@@ -1,4 +1,4 @@
-package calculadoraGastos.Acme.adapter
+package calculadoraGastos.Acme.view.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import calculadoraGastos.Acme.R
-import calculadoraGastos.Acme.data.Despesa
+import calculadoraGastos.Acme.model.Despesa
 
 class DespesaAdapter(
     private var listaDespesas: List<Despesa>,

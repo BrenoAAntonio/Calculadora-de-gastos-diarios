@@ -1,4 +1,4 @@
-package calculadoraGastos.Acme
+package calculadoraGastos.Acme.view.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,8 +6,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import calculadoraGastos.Acme.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import net.objecthunter.exp4j.Expression
 import net.objecthunter.exp4j.ExpressionBuilder
 
 class CalculadoraActivity : AppCompatActivity() {

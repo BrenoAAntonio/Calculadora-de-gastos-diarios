@@ -1,4 +1,4 @@
-package calculadoraGastos.Acme
+package calculadoraGastos.Acme.view.activities
 
 import android.content.Intent
 import android.graphics.Color
@@ -7,9 +7,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import calculadoraGastos.Acme.adapter.DespesaAdapter
-import calculadoraGastos.Acme.data.AppDatabase
-import calculadoraGastos.Acme.data.Despesa
+import calculadoraGastos.Acme.R
+import calculadoraGastos.Acme.view.adapters.DespesaAdapter
+import calculadoraGastos.Acme.database.AppDatabase
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -182,7 +182,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        findViewById<BottomNavigationView>(R.id.bottomNavigationView).selectedItemId = R.id.menu_home
+        findViewById<BottomNavigationView>(R.id.bottomNavigationView).selectedItemId =
+            R.id.menu_home
         carregarDados()
     }
 }

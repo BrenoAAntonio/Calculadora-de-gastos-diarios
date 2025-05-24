@@ -1,9 +1,11 @@
-package calculadoraGastos.Acme.data
+package calculadoraGastos.Acme.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import calculadoraGastos.Acme.model.Despesa
+import calculadoraGastos.Acme.model.DespesaDao
 
 @Database(entities = [Despesa::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
