@@ -12,11 +12,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.*
+import kotlin.random.Random
 
 class MainController(private val context: Context) {
 
     private val db = AppDatabase.getDatabase(context)
     private val formatoMoeda = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
+    private val categoriaCoresCache = mutableMapOf<String, Int>()
 
     suspend fun carregarDados(): Triple<Double, Map<String, Double>, List<Despesa>> {
         return withContext(Dispatchers.IO) {
@@ -29,6 +31,13 @@ class MainController(private val context: Context) {
                     categoriaMap.getOrDefault(despesa.categoria, 0.0) + despesa.valor
             }
 
+            val categorias = db.categoriaDao().buscarTodasCategorias()
+            categorias.forEach { categoria ->
+                categoria.cor?.let { corString ->
+                    categoriaCoresCache[categoria.nome] = Color.parseColor(corString)
+                }
+            }
+
             Triple(totalGastos, categoriaMap, despesas.take(5))
         }
     }
@@ -37,17 +46,17 @@ class MainController(private val context: Context) {
         return formatoMoeda.format(valor)
     }
 
-    fun criarDadosGrafico(categoriaMap: Map<String, Double>): PieData {
+    fun criarDadosGrafico(categoriaMap: Map<String, Double>, coresMap: Map<String, Int>): PieData {
         val entries = ArrayList<PieEntry>()
         val cores = ArrayList<Int>()
 
         categoriaMap.forEach { (categoria, valor) ->
             entries.add(PieEntry(valor.toFloat(), categoria))
-            cores.add(obterCorCategoria(categoria))
+            cores.add(coresMap[categoria] ?: Color.GRAY)
         }
 
         val dataSet = PieDataSet(entries, "Categorias").apply {
-            colors = cores
+            this.colors = cores
             valueTextSize = 12f
             valueTextColor = Color.BLACK
             sliceSpace = 3f
@@ -59,13 +68,33 @@ class MainController(private val context: Context) {
         }
     }
 
-    private fun obterCorCategoria(categoria: String): Int {
-        return when (categoria.lowercase()) {
-            "alimentação" -> Color.parseColor("#4CAF50")
-            "transporte" -> Color.parseColor("#2196F3")
-            "lazer" -> Color.parseColor("#FF9800")
-            "saúde" -> Color.parseColor("#F44336")
-            else -> Color.parseColor("#9C27B0")
+    public suspend fun obterCorCategoria(categoriaNome: String): Int {
+        return if (categoriaCoresCache.containsKey(categoriaNome)) {
+            categoriaCoresCache[categoriaNome]!!
+        } else {
+            val categoria = withContext(Dispatchers.IO) {
+                db.categoriaDao().buscarTodasCategorias().find { it.nome == categoriaNome }
+            }
+            categoria?.cor?.let { corString ->
+                val cor = Color.parseColor(corString)
+                categoriaCoresCache[categoriaNome] = cor
+                return cor
+            } ?: run {
+                val novaCor = gerarCorAleatoria()
+                withContext(Dispatchers.IO) {
+                    val categoriaParaAtualizar = db.categoriaDao().buscarTodasCategorias().find { it.nome == categoriaNome }
+                    categoriaParaAtualizar?.let {
+                        db.categoriaDao().atualizarCategoria(it.copy(cor = String.format("#%06X", (0xFFFFFF and novaCor))))
+                    }
+                }
+                categoriaCoresCache[categoriaNome] = novaCor
+                return novaCor
+            }
         }
+    }
+
+    private fun gerarCorAleatoria(): Int {
+        val rnd = Random.Default
+        return Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
     }
 }

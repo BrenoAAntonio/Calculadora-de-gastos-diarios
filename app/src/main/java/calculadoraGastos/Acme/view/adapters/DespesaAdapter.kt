@@ -1,5 +1,6 @@
 package calculadoraGastos.Acme.view.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,16 +9,23 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import calculadoraGastos.Acme.R
+import calculadoraGastos.Acme.controller.MainController
 import calculadoraGastos.Acme.model.Despesa
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DespesaAdapter(
     private var listaDespesas: List<Despesa>,
     private val onDespesaClick: (Despesa) -> Unit,
     private val onDespesaDelete: (Despesa) -> Unit = {},
     private val onDespesaEdit: (Despesa) -> Unit = {},
-    private val mostrarBotaoExcluir: Boolean = true, // Adicionado este parâmetro
-    private val mostrarBotaoEditar: Boolean = true    // Adicionado este parâmetro
+    private val mostrarBotaoExcluir: Boolean = true,
+    private val mostrarBotaoEditar: Boolean = true,
+    private val context: Context
 ) : RecyclerView.Adapter<DespesaAdapter.DespesaViewHolder>() {
+
+    private val mainController = MainController(context)
 
     inner class DespesaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val txtNome: TextView = itemView.findViewById(R.id.txtNome)
@@ -65,17 +73,12 @@ class DespesaAdapter(
             txtCategoria.text = despesa.categoria
             txtIcone.text = despesa.categoria.firstOrNull()?.uppercase() ?: "?"
 
-            val color = when (despesa.categoria.lowercase()) {
-                "alimentação" -> "#4CAF50"
-                "transporte" -> "#2196F3"
-                "lazer" -> "#FF9800"
-                "saúde" -> "#F44336"
-                else -> "#9C27B0"
+            CoroutineScope(Dispatchers.Main).launch {
+                val color = mainController.obterCorCategoria(despesa.categoria)
+                cardIcone.setCardBackgroundColor(color)
             }
-            cardIcone.setCardBackgroundColor(android.graphics.Color.parseColor(color))
 
             btnRemover.visibility = if (mostrarBotaoExcluir) View.VISIBLE else View.GONE
-
             btnEditar.visibility = if (mostrarBotaoEditar) View.VISIBLE else View.GONE
         }
     }

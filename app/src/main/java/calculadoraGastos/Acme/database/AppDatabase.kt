@@ -9,10 +9,10 @@ import calculadoraGastos.Acme.model.CategoriaDao
 import calculadoraGastos.Acme.model.Despesa
 import calculadoraGastos.Acme.model.DespesaDao
 
-@Database(entities = [Despesa::class, Categoria::class], version = 2, exportSchema = false) // Aumentamos a versão do banco
+@Database(entities = [Despesa::class, Categoria::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun despesaDao(): DespesaDao
-    abstract fun categoriaDao(): CategoriaDao // Adicionamos o DAO de Categoria
+    abstract fun categoriaDao(): CategoriaDao
 
     companion object {
         @Volatile

@@ -8,8 +8,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import calculadoraGastos.Acme.R
 import calculadoraGastos.Acme.controller.ListaDespesasController
+import calculadoraGastos.Acme.model.Categoria
 import calculadoraGastos.Acme.model.Despesa
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EditarDespesaActivity : AppCompatActivity() {
 
@@ -20,6 +25,7 @@ class EditarDespesaActivity : AppCompatActivity() {
     private lateinit var btnSalvar: Button
     private var despesaId: Int = -1
     private var despesaAtual: Despesa? = null
+    private var listaCategorias: List<Categoria> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,48 +43,31 @@ class EditarDespesaActivity : AppCompatActivity() {
 
         btnSalvar.text = "Salvar Edição"
 
-        val categorias = resources.getStringArray(R.array.categorias_array)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categorias)
-        spinnerCategoria.adapter = adapter
-
-        despesaId = intent.getIntExtra("despesa_id", -1)
-
-        if (despesaId != -1) {
-            controller.buscarDespesa(despesaId) { despesa ->
-                despesa?.let {
-                    despesaAtual = it
-                    editTextNome.setText(it.nome)
-                    editTextValor.setText(it.valor.toString())
-
-                    val index = categorias.indexOf(it.categoria)
-                    if (index != -1) {
-                        spinnerCategoria.setSelection(index)
-                    }
-                } ?: run {
-                    Toast.makeText(this, "Despesa não encontrada", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
+        CoroutineScope(Dispatchers.Main).launch {
+            carregarCategorias()
+            despesaId = intent.getIntExtra("despesa_id", -1)
+            if (despesaId != -1) {
+                carregarDespesaParaEdicao(despesaId)
+            } else {
+                Toast.makeText(this@EditarDespesaActivity, "Erro ao carregar despesa", Toast.LENGTH_SHORT).show()
+                finish()
             }
-        } else {
-            Toast.makeText(this, "Erro ao carregar despesa", Toast.LENGTH_SHORT).show()
-            finish()
         }
 
         btnSalvar.setOnClickListener {
             despesaAtual?.let { despesa ->
                 val nome = editTextNome.text.toString()
                 val valorStr = editTextValor.text.toString()
-                val categoria = spinnerCategoria.selectedItem.toString()
-                val data = despesa.data
+                val categoriaSelecionada = spinnerCategoria.selectedItem.toString()
 
-                if (nome.isNotEmpty() && valorStr.isNotEmpty() && categoria.isNotEmpty()) {
+                if (nome.isNotEmpty() && valorStr.isNotEmpty() && categoriaSelecionada.isNotEmpty()) {
                     val valor = valorStr.toDoubleOrNull()
                     if (valor != null) {
                         val despesaAtualizada = despesa.copy(
                             nome = nome,
                             valor = valor,
-                            categoria = categoria,
-                            data = data
+                            categoria = categoriaSelecionada,
+                            data = despesa.data
                         )
                         controller.atualizarDespesa(despesaAtualizada) {
                             Toast.makeText(this, "Despesa atualizada", Toast.LENGTH_SHORT).show()
@@ -90,6 +79,38 @@ class EditarDespesaActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
                 }
+            }
+        }
+    }
+
+    private suspend fun carregarCategorias() {
+        listaCategorias = controller.buscarTodasCategorias()
+        withContext(Dispatchers.Main) {
+            val nomesDasCategorias = listaCategorias.map { it.nome }
+            val adapter = ArrayAdapter(
+                this@EditarDespesaActivity,
+                android.R.layout.simple_spinner_dropdown_item,
+                nomesDasCategorias
+            )
+            spinnerCategoria.adapter = adapter
+        }
+    }
+
+    private suspend fun carregarDespesaParaEdicao(id: Int) {
+        val despesa = controller.buscarDespesaPorId(id)
+        withContext(Dispatchers.Main) {
+            despesa?.let {
+                despesaAtual = it
+                editTextNome.setText(it.nome)
+                editTextValor.setText(it.valor.toString())
+
+                val index = listaCategorias.indexOfFirst { categoria -> categoria.nome == it.categoria }
+                if (index != -1) {
+                    spinnerCategoria.setSelection(index)
+                }
+            } ?: run {
+                Toast.makeText(this@EditarDespesaActivity, "Despesa não encontrada", Toast.LENGTH_SHORT).show()
+                finish()
             }
         }
     }

@@ -24,6 +24,7 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -96,7 +97,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             onDespesaDelete = {},
             onDespesaEdit = {},
             mostrarBotaoExcluir = false,
-            mostrarBotaoEditar = false
+            mostrarBotaoEditar = false,
+            this
         )
         recyclerView.adapter = adapter
     }
@@ -133,10 +135,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         CoroutineScope(Dispatchers.Main).launch {
             val (totalGastos, categoriaMap, despesasRecentes) = controller.carregarDados()
 
+            val categoriaCoresMap = mutableMapOf<String, Int>()
+            categoriaMap.keys.forEach { categoria ->
+                categoriaCoresMap[categoria] = withContext(Dispatchers.IO) {
+                    controller.obterCorCategoria(categoria)
+                }
+            }
+
             findViewById<TextView>(R.id.tvTotalGastos).text = controller.formatarValorMonetario(totalGastos)
             findViewById<TextView>(R.id.tvTotalHoje).text = controller.formatarValorMonetario(totalGastos)
 
-            pieChart.data = controller.criarDadosGrafico(categoriaMap)
+            pieChart.data = controller.criarDadosGrafico(categoriaMap, categoriaCoresMap)
             pieChart.invalidate()
 
             adapter.atualizarLista(despesasRecentes)

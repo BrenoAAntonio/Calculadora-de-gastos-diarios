@@ -1,5 +1,6 @@
 package calculadoraGastos.Acme.view.activities
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -16,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 class AdicionarCategoriaActivity : AppCompatActivity() {
 
@@ -46,7 +48,8 @@ class AdicionarCategoriaActivity : AppCompatActivity() {
         btnSalvarCategoria.setOnClickListener {
             val nome = etNomeCategoria.text.toString().trim()
             if (nome.isNotEmpty()) {
-                salvarCategoria(Categoria(nome = nome))
+                val cor = gerarCorAleatoriaHex()
+                salvarCategoria(Categoria(nome = nome, cor = cor))
             } else {
                 Toast.makeText(this, "Por favor, digite o nome da categoria.", Toast.LENGTH_SHORT).show()
             }
@@ -85,5 +88,10 @@ class AdicionarCategoriaActivity : AppCompatActivity() {
                 carregarCategorias()
             }
         }
+    }
+
+    private fun gerarCorAleatoriaHex(): String {
+        val rnd = Random.Default
+        return String.format("#%06X", (0xFFFFFF and rnd.nextInt()))
     }
 }

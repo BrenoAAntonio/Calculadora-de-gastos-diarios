@@ -45,13 +45,13 @@ class ListaDespesasActivity : AppCompatActivity() {
                 }
             },
             onDespesaEdit = { despesa ->
-                // Ação ao clicar no ícone de lápis (editar)
                 val intent = Intent(this, EditarDespesaActivity::class.java)
                 intent.putExtra("despesa_id", despesa.id)
                 startActivity(intent)
             },
             mostrarBotaoExcluir = true,
-            mostrarBotaoEditar = true
+            mostrarBotaoEditar = true,
+            this
         )
         recyclerView.adapter = adapter
 

@@ -6,8 +6,13 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import calculadoraGastos.Acme.R
 import calculadoraGastos.Acme.controller.RegistrarDespesaController
+import calculadoraGastos.Acme.database.AppDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,6 +22,7 @@ class RegistrarDespesaActivity : AppCompatActivity() {
     private lateinit var edtNomeDespesa: TextInputEditText
     private lateinit var edtValorDespesa: TextInputEditText
     private lateinit var spinnerCategoria: Spinner
+    private val db by lazy { AppDatabase.getDatabase(this).categoriaDao() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +35,7 @@ class RegistrarDespesaActivity : AppCompatActivity() {
         val btnRegistrarDespesa = findViewById<Button>(R.id.btnRegistrarDespesa)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
-        val categorias = arrayOf("Alimentação", "Transporte", "Lazer", "Saúde", "Outros")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categorias)
-        spinnerCategoria.adapter = adapter
+        carregarCategorias()
 
         bottomNav.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -77,6 +81,21 @@ class RegistrarDespesaActivity : AppCompatActivity() {
                 }
             } else {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun carregarCategorias() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val categoriasDoBanco = db.buscarTodasCategorias()
+            val nomesDasCategorias = categoriasDoBanco.map { it.nome }.toTypedArray()
+            withContext(Dispatchers.Main) {
+                val adapter = ArrayAdapter(
+                    this@RegistrarDespesaActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    nomesDasCategorias
+                )
+                spinnerCategoria.adapter = adapter
             }
         }
     }
