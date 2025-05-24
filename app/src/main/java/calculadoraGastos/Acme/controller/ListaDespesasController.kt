@@ -31,4 +31,23 @@ class ListaDespesasController(private val context: Context) {
             }
         }
     }
+
+    fun buscarDespesa(id: Int, onResult: (Despesa?) -> Unit) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val despesa = db.despesaDao().buscarDespesaPorId(id)
+            launch(Dispatchers.Main) {
+                onResult(despesa)
+            }
+        }
+    }
+
+    fun atualizarDespesa(despesa: Despesa, onComplete: () -> Unit) {
+        GlobalScope.launch(Dispatchers.IO) {
+            db.despesaDao().atualizarDespesa(despesa)
+            launch(Dispatchers.Main) {
+                onComplete()
+                carregarDespesas()
+            }
+        }
+    }
 }

@@ -10,6 +10,12 @@ interface DespesaDao {
     @Query("SELECT * FROM despesas ORDER BY id DESC")
     fun buscarTodasDespesas(): List<Despesa>
 
+    @Query("SELECT * FROM despesas WHERE id = :id")
+    fun buscarDespesaPorId(id: Int): Despesa?
+
+    @Update
+    fun atualizarDespesa(despesa: Despesa)
+
     @Delete
     fun deletarDespesa(despesa: Despesa)
 

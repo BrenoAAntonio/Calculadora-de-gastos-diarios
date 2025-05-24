@@ -56,7 +56,9 @@ class MainActivity : AppCompatActivity() {
             emptyList(),
             onDespesaClick = {},
             onDespesaDelete = {},
-            mostrarBotaoExcluir = false
+            onDespesaEdit = {},
+            mostrarBotaoExcluir = false,
+            mostrarBotaoEditar = false
         )
         recyclerView.adapter = adapter
     }

@@ -12,9 +12,11 @@ import calculadoraGastos.Acme.model.Despesa
 
 class DespesaAdapter(
     private var listaDespesas: List<Despesa>,
-    private val onDespesaClick: (Despesa) -> Unit = {},
+    private val onDespesaClick: (Despesa) -> Unit,
     private val onDespesaDelete: (Despesa) -> Unit = {},
-    private val mostrarBotaoExcluir: Boolean = true
+    private val onDespesaEdit: (Despesa) -> Unit = {},
+    private val mostrarBotaoExcluir: Boolean = true, // Adicionado este parâmetro
+    private val mostrarBotaoEditar: Boolean = true    // Adicionado este parâmetro
 ) : RecyclerView.Adapter<DespesaAdapter.DespesaViewHolder>() {
 
     inner class DespesaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,6 +26,28 @@ class DespesaAdapter(
         val cardIcone: CardView = itemView.findViewById(R.id.cardIcone)
         val txtIcone: TextView = itemView.findViewById(R.id.txtIcone)
         val btnRemover: ImageButton = itemView.findViewById(R.id.btnRemover)
+        val btnEditar: ImageButton = itemView.findViewById(R.id.btnEditar)
+
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onDespesaClick(listaDespesas[position])
+                }
+            }
+            btnEditar.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onDespesaEdit(listaDespesas[position])
+                }
+            }
+            btnRemover.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onDespesaDelete(listaDespesas[position])
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DespesaViewHolder {
@@ -50,14 +74,9 @@ class DespesaAdapter(
             }
             cardIcone.setCardBackgroundColor(android.graphics.Color.parseColor(color))
 
-            itemView.setOnClickListener { onDespesaClick(despesa) }
+            btnRemover.visibility = if (mostrarBotaoExcluir) View.VISIBLE else View.GONE
 
-            if (mostrarBotaoExcluir) {
-                btnRemover.visibility = View.VISIBLE
-                btnRemover.setOnClickListener { onDespesaDelete(despesa) }
-            } else {
-                btnRemover.visibility = View.GONE
-            }
+            btnEditar.visibility = if (mostrarBotaoEditar) View.VISIBLE else View.GONE
         }
     }
 

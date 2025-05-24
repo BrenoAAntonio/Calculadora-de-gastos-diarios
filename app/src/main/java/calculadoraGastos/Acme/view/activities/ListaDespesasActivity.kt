@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import calculadoraGastos.Acme.R
 import calculadoraGastos.Acme.view.adapters.DespesaAdapter
 import calculadoraGastos.Acme.controller.ListaDespesasController
+import calculadoraGastos.Acme.model.Despesa
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -30,6 +31,9 @@ class ListaDespesasActivity : AppCompatActivity() {
         adapter = DespesaAdapter(
             emptyList(),
             onDespesaClick = { despesa ->
+                val intent = Intent(this, EditarDespesaActivity::class.java)
+                intent.putExtra("despesa_id", despesa.id)
+                startActivity(intent)
             },
             onDespesaDelete = { despesa ->
                 controller.deletarDespesa(despesa) {
@@ -39,7 +43,15 @@ class ListaDespesasActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            }
+            },
+            onDespesaEdit = { despesa ->
+                // Ação ao clicar no ícone de lápis (editar)
+                val intent = Intent(this, EditarDespesaActivity::class.java)
+                intent.putExtra("despesa_id", despesa.id)
+                startActivity(intent)
+            },
+            mostrarBotaoExcluir = true,
+            mostrarBotaoEditar = true
         )
         recyclerView.adapter = adapter
 
@@ -73,6 +85,11 @@ class ListaDespesasActivity : AppCompatActivity() {
             startActivity(Intent(this, RegistrarDespesaActivity::class.java))
         }
 
+        controller.carregarDespesas()
+    }
+
+    override fun onResume() {
+        super.onResume()
         controller.carregarDespesas()
     }
 }
