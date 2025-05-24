@@ -4,49 +4,48 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import calculadoraGastos.Acme.R
 import calculadoraGastos.Acme.view.adapters.DespesaAdapter
-import calculadoraGastos.Acme.database.AppDatabase
+import calculadoraGastos.Acme.controller.ListaDespesasController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class ListaDespesasActivity : AppCompatActivity() {
 
     private lateinit var adapter: DespesaAdapter
-    private lateinit var db: AppDatabase
+    private lateinit var controller: ListaDespesasController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_despesas)
 
-        db = AppDatabase.getDatabase(this)
+        controller = ListaDespesasController(this)
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewDespesas)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         adapter = DespesaAdapter(
             emptyList(),
-            onDespesaClick = { despesa ->},
+            onDespesaClick = { despesa ->
+            },
             onDespesaDelete = { despesa ->
-                GlobalScope.launch(Dispatchers.IO) {
-                    db.despesaDao().deletarDespesa(despesa)
-                    runOnUiThread {
-                        Toast.makeText(
-                            this@ListaDespesasActivity,
-                            "Despesa removida",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        carregarDespesas()
-                    }
+                controller.deletarDespesa(despesa) {
+                    Toast.makeText(
+                        this@ListaDespesasActivity,
+                        "Despesa removida",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         )
         recyclerView.adapter = adapter
+
+        controller.despesas.observe(this, Observer { despesas ->
+            adapter.atualizarLista(despesas)
+        })
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNav.selectedItemId = R.id.menu_list
@@ -74,15 +73,6 @@ class ListaDespesasActivity : AppCompatActivity() {
             startActivity(Intent(this, RegistrarDespesaActivity::class.java))
         }
 
-        carregarDespesas()
-    }
-
-    private fun carregarDespesas() {
-        GlobalScope.launch(Dispatchers.IO) {
-            val despesas = db.despesaDao().buscarTodasDespesas()
-            runOnUiThread {
-                adapter.atualizarLista(despesas)
-            }
-        }
+        controller.carregarDespesas()
     }
 }
