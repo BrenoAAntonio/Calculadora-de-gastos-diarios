@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">Calculadora de Gastos Diários</string>
-
+    <string name="app_name">Calculadora De Gastos</string>
 
     <string-array name="categorias_array">
         <item>Alimentação</item>
@@ -9,4 +8,7 @@
         <item>Saúde</item>
         <item>Outros</item>
     </string-array>
+
+    <string name="navigation_drawer_open">Abrir menu de navegação</string>
+    <string name="navigation_drawer_close">Fechar menu de navegação</string>
 </resources>
