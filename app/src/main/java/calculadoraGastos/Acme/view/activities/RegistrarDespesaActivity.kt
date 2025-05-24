@@ -4,37 +4,34 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import calculadoraGastos.Acme.R
-import calculadoraGastos.Acme.database.AppDatabase
-import calculadoraGastos.Acme.model.Despesa
+import calculadoraGastos.Acme.controller.RegistrarDespesaController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class RegistrarDespesaActivity : AppCompatActivity() {
+
+    private lateinit var controller: RegistrarDespesaController
+    private lateinit var edtNomeDespesa: TextInputEditText
+    private lateinit var edtValorDespesa: TextInputEditText
+    private lateinit var spinnerCategoria: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registrar_despesa)
 
-        val edtNomeDespesa = findViewById<TextInputEditText>(R.id.edtNomeDespesa)
-        val edtValorDespesa = findViewById<TextInputEditText>(R.id.edtValorDespesa)
-        val spinnerCategoria = findViewById<Spinner>(R.id.spinnerCategoria)
+        controller = RegistrarDespesaController(this)
+        edtNomeDespesa = findViewById(R.id.edtNomeDespesa)
+        edtValorDespesa = findViewById(R.id.edtValorDespesa)
+        spinnerCategoria = findViewById(R.id.spinnerCategoria)
         val btnRegistrarDespesa = findViewById<Button>(R.id.btnRegistrarDespesa)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
         val categorias = arrayOf("Alimentação", "Transporte", "Lazer", "Saúde", "Outros")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categorias)
         spinnerCategoria.adapter = adapter
-
-        val db = AppDatabase.getDatabase(this)
-        val despesaDao = db.despesaDao()
-
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
         bottomNav.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -61,30 +58,19 @@ class RegistrarDespesaActivity : AppCompatActivity() {
             val nome = edtNomeDespesa.text.toString().trim()
             val valorTexto = edtValorDespesa.text.toString().trim()
             val categoria = spinnerCategoria.selectedItem.toString()
+            val dataAtual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
             if (nome.isNotEmpty() && valorTexto.isNotEmpty()) {
                 try {
                     val valor = valorTexto.toDouble()
-                    val dataAtual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
-
-                    val novaDespesa = Despesa(
-                        nome = nome,
-                        valor = valor,
-                        categoria = categoria,
-                        data = dataAtual
-                    )
-
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        despesaDao.inserirDespesa(novaDespesa)
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                this@RegistrarDespesaActivity,
-                                "Despesa salva com sucesso!",
-                                Toast.LENGTH_LONG
-                            ).show()
-                            edtNomeDespesa.text?.clear()
-                            edtValorDespesa.text?.clear()
-                        }
+                    controller.registrarDespesa(nome, valor, categoria, dataAtual) {
+                        Toast.makeText(
+                            this@RegistrarDespesaActivity,
+                            "Despesa salva com sucesso!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        edtNomeDespesa.text?.clear()
+                        edtValorDespesa.text?.clear()
                     }
                 } catch (e: NumberFormatException) {
                     Toast.makeText(this, "Valor inválido", Toast.LENGTH_SHORT).show()
