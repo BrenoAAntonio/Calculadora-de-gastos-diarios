@@ -30,6 +30,8 @@
         <activity android:name=".view.activities.CalculadoraActivity" android:exported="true" />
 
         <activity android:name=".view.activities.EditarDespesaActivity" />
+
+        <activity android:name=".view.activities.AdicionarCategoriaActivity" />
     </application>
 
 </manifest>

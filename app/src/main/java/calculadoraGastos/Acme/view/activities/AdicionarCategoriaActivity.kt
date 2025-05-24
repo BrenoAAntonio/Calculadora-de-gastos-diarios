@@ -6,18 +6,24 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import calculadoraGastos.Acme.R
 import calculadoraGastos.Acme.database.AppDatabase
 import calculadoraGastos.Acme.model.Categoria
+import calculadoraGastos.Acme.view.adapters.CategoriaAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AdicionarCategoriaActivity : AppCompatActivity() {
 
     private lateinit var etNomeCategoria: EditText
     private lateinit var btnSalvarCategoria: Button
     private lateinit var btnVoltarCategoria: ImageButton
+    private lateinit var rvCategorias: RecyclerView
+    private lateinit var categoriaAdapter: CategoriaAdapter
     private val db by lazy { AppDatabase.getDatabase(this).categoriaDao() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +33,15 @@ class AdicionarCategoriaActivity : AppCompatActivity() {
         etNomeCategoria = findViewById(R.id.etNomeCategoria)
         btnSalvarCategoria = findViewById(R.id.btnSalvarCategoria)
         btnVoltarCategoria = findViewById(R.id.btnVoltarCategoria)
+        rvCategorias = findViewById(R.id.rvCategorias)
+        rvCategorias.layoutManager = LinearLayoutManager(this)
+
+        categoriaAdapter = CategoriaAdapter(emptyList()) { categoria ->
+            excluirCategoria(categoria)
+        }
+        rvCategorias.adapter = categoriaAdapter
+
+        carregarCategorias()
 
         btnSalvarCategoria.setOnClickListener {
             val nome = etNomeCategoria.text.toString().trim()
@@ -42,12 +57,32 @@ class AdicionarCategoriaActivity : AppCompatActivity() {
         }
     }
 
+    private fun carregarCategorias() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val categorias = db.buscarTodasCategorias()
+            withContext(Dispatchers.Main) {
+                categoriaAdapter.atualizarLista(categorias)
+            }
+        }
+    }
+
     private fun salvarCategoria(categoria: Categoria) {
         CoroutineScope(Dispatchers.IO).launch {
             db.inserirCategoria(categoria)
-            runOnUiThread {
+            withContext(Dispatchers.Main) {
                 Toast.makeText(this@AdicionarCategoriaActivity, "Categoria salva!", Toast.LENGTH_SHORT).show()
-                finish()
+                etNomeCategoria.text.clear()
+                carregarCategorias()
+            }
+        }
+    }
+
+    private fun excluirCategoria(categoria: Categoria) {
+        CoroutineScope(Dispatchers.IO).launch {
+            db.deletarCategoria(categoria)
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@AdicionarCategoriaActivity, "Categoria excluída!", Toast.LENGTH_SHORT).show()
+                carregarCategorias()
             }
         }
     }
