@@ -32,14 +32,11 @@ class EditarDespesaActivity : AppCompatActivity() {
         spinnerCategoria = findViewById(R.id.spinnerCategoria)
         btnSalvar = findViewById(R.id.btnRegistrarDespesa)
 
-        // Encontra o CardView do cabeçalho
         val cardHeader = findViewById<androidx.cardview.widget.CardView>(R.id.cardHeader)
-        // Dentro do CardView, encontra e define o texto do título
         cardHeader.findViewById<android.widget.TextView>(R.id.tvAppTitle)?.text = "Editar Despesa"
 
         btnSalvar.text = "Salvar Edição"
 
-        // Carregar as categorias no Spinner
         val categorias = resources.getStringArray(R.array.categorias_array)
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categorias)
         spinnerCategoria.adapter = adapter
