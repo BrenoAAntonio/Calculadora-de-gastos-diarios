@@ -55,7 +55,7 @@ class EditarDespesaActivity : AppCompatActivity() {
         editTextValor = findViewById(R.id.edtValorDespesa)
         spinnerCategoria = findViewById(R.id.spinnerCategoria)
         chipGroupTags = findViewById(R.id.chipGroupTags)
-        btnSalvar = findViewById(R.id.btnRegistrarDespesa)
+        btnSalvar = findViewById(R.id.btnSalvarEdicao)
 
         val cardHeader = findViewById<androidx.cardview.widget.CardView>(R.id.cardHeader)
         cardHeader.findViewById<android.widget.TextView>(R.id.tvAppTitle)?.text = "Editar Despesa"
