@@ -179,6 +179,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_home -> {
             }
+            R.id.nav_manage_tags -> { // Adicione este caso
+                startActivity(Intent(this, GerenciarTagsActivity::class.java))
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

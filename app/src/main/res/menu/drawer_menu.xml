@@ -11,6 +11,9 @@
             android:id="@+id/nav_add_category"
             android:title="Adicionar Categoria" />
         <item
+            android:id="@+id/nav_manage_tags"
+            android:title="Gerenciar Tags" />
+        <item
             android:id="@+id/nav_list_expenses"
             android:title="Listar Despesas" />
         <item

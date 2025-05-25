@@ -4,15 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import calculadoraGastos.Acme.model.Categoria
-import calculadoraGastos.Acme.model.CategoriaDao
-import calculadoraGastos.Acme.model.Despesa
-import calculadoraGastos.Acme.model.DespesaDao
+import calculadoraGastos.Acme.model.*
 
-@Database(entities = [Despesa::class, Categoria::class], version = 3, exportSchema = false)
+@Database(entities = [Despesa::class, Categoria::class, Tag::class, DespesaTag::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun despesaDao(): DespesaDao
     abstract fun categoriaDao(): CategoriaDao
+    abstract fun tagDao(): TagDao
+    abstract fun despesaTagDao(): DespesaTagDao
 
     companion object {
         @Volatile
