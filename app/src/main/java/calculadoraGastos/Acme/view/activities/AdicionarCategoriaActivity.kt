@@ -1,12 +1,10 @@
 package calculadoraGastos.Acme.view.activities
 
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import calculadoraGastos.Acme.R
@@ -19,22 +17,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
-class AdicionarCategoriaActivity : AppCompatActivity() {
+class AdicionarCategoriaActivity : BaseActivity() {
 
     private lateinit var etNomeCategoria: EditText
     private lateinit var btnSalvarCategoria: Button
-    private lateinit var btnVoltarCategoria: ImageButton
     private lateinit var rvCategorias: RecyclerView
     private lateinit var categoriaAdapter: CategoriaAdapter
     private val db by lazy { AppDatabase.getDatabase(this).categoriaDao() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_adicionar_categoria)
+        setContentLayout(R.layout.activity_adicionar_categoria)
+
 
         etNomeCategoria = findViewById(R.id.etNomeCategoria)
         btnSalvarCategoria = findViewById(R.id.btnSalvarCategoria)
-        btnVoltarCategoria = findViewById(R.id.btnVoltarCategoria)
         rvCategorias = findViewById(R.id.rvCategorias)
         rvCategorias.layoutManager = LinearLayoutManager(this)
 
@@ -53,10 +50,6 @@ class AdicionarCategoriaActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Por favor, digite o nome da categoria.", Toast.LENGTH_SHORT).show()
             }
-        }
-
-        btnVoltarCategoria.setOnClickListener {
-            finish()
         }
     }
 
