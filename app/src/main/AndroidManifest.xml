@@ -34,6 +34,8 @@
         <activity android:name=".view.activities.AdicionarCategoriaActivity" />
 
         <activity android:name=".view.activities.GerenciarTagsActivity" />
+
+        <activity android:name=".view.activities.PesquisarDespesasPorTagActivity" />
     </application>
 
 </manifest>

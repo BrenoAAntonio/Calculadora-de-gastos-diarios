@@ -1,6 +1,7 @@
 package calculadoraGastos.Acme.controller
 
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import calculadoraGastos.Acme.database.AppDatabase
@@ -12,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RegistrarDespesaController(context: Context) {
+class RegistrarDespesaController(private val context: Context) {
 
     private val db = AppDatabase.getDatabase(context)
     private val despesaDao = db.despesaDao()
@@ -38,13 +39,18 @@ class RegistrarDespesaController(context: Context) {
             )
             val despesaId = despesaDao.inserirDespesa(novaDespesa)
 
-            selectedTagIds.forEach { tagId ->
-                val despesaTag = DespesaTag(despesaId.toString().toInt(), tagId)
-                despesaTagDao.insert(despesaTag)
-            }
-
-            withContext(Dispatchers.Main) {
-                onComplete()
+            if (despesaId > 0) {
+                selectedTagIds.forEach { tagId ->
+                    val despesaTag = DespesaTag(despesaId.toInt(), tagId)
+                    despesaTagDao.insert(despesaTag)
+                }
+                withContext(Dispatchers.Main) {
+                    onComplete()
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Erro ao salvar despesa.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

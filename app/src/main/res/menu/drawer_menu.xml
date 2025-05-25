@@ -14,6 +14,9 @@
             android:id="@+id/nav_manage_tags"
             android:title="Gerenciar Tags" />
         <item
+            android:id="@+id/nav_search_tags"
+            android:title="Pesquisar por Tags" />
+        <item
             android:id="@+id/nav_list_expenses"
             android:title="Listar Despesas" />
         <item

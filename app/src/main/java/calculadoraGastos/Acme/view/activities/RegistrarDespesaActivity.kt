@@ -80,19 +80,16 @@ class RegistrarDespesaActivity : AppCompatActivity() {
                     try {
                         val valor = valorTexto.toDouble()
                         controller.registrarDespesa(nome, valor, categoria, dataAtual, selectedTagIds) {
-                            // Tenta usar o contexto da coroutine pai
-                            launch(Dispatchers.Main) {
-                                Toast.makeText(
-                                    this@RegistrarDespesaActivity,
-                                    "Despesa salva com sucesso!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                edtNomeDespesa.text?.clear()
-                                edtValorDespesa.text?.clear()
-                                chipGroupTags.clearCheck()
-                                startActivity(Intent(this@RegistrarDespesaActivity, MainActivity::class.java))
-                                finish()
-                            }
+                            Toast.makeText(
+                                this@RegistrarDespesaActivity,
+                                "Despesa salva com sucesso!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            edtNomeDespesa.text?.clear()
+                            edtValorDespesa.text?.clear()
+                            chipGroupTags.clearCheck()
+                            startActivity(Intent(this@RegistrarDespesaActivity, MainActivity::class.java))
+                            finish()
                         }
                     } catch (e: NumberFormatException) {
                         Toast.makeText(this@RegistrarDespesaActivity, "Valor inválido", Toast.LENGTH_SHORT).show()

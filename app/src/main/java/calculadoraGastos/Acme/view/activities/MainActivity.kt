@@ -182,6 +182,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_manage_tags -> { // Adicione este caso
                 startActivity(Intent(this, GerenciarTagsActivity::class.java))
             }
+            R.id.nav_search_tags -> { // Adicione esta linha para iniciar a nova Activity
+                startActivity(Intent(this, PesquisarDespesasPorTagActivity::class.java))
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
