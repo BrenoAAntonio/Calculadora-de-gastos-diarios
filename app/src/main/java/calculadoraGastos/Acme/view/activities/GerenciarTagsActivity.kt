@@ -16,7 +16,7 @@ import calculadoraGastos.Acme.model.Tag
 import calculadoraGastos.Acme.view.adapters.TagAdapter
 import android.util.Log
 
-class GerenciarTagsActivity : AppCompatActivity() {
+class GerenciarTagsActivity : BaseActivity() {
 
     private lateinit var tagController: TagController
     private lateinit var recyclerView: RecyclerView
@@ -26,12 +26,7 @@ class GerenciarTagsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_gerenciar_tags)
-
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Gerenciar Tags"
+        setContentLayout(R.layout.activity_gerenciar_tags_content)
 
         tagController = TagController(this)
 
@@ -106,10 +101,5 @@ class GerenciarTagsActivity : AppCompatActivity() {
         }
 
         builder.show()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressedDispatcher.onBackPressed()
-        return true
     }
 }
