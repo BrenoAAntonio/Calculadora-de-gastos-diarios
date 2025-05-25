@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:translationY="-30dp"
+        android:translationY="-80dp"
         app:backgroundTint="@color/green_primary"
         app:srcCompat="@drawable/ic_add"
         app:tint="@color/white" />

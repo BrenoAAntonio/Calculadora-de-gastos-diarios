@@ -17,7 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -31,8 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:textSize="16sp"
-            android:text="R$ 0,00" />
+            android:textSize="14sp" android:text="R$ 0,00" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -46,8 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:textSize="16sp"
-            android:text="R$ 0,00" />
+            android:textSize="14sp" android:text="R$ 0,00" />
 
     </LinearLayout>
 
