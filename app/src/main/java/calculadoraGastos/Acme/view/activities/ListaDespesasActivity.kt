@@ -14,14 +14,14 @@ import calculadoraGastos.Acme.model.Despesa
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class ListaDespesasActivity : AppCompatActivity() {
+class ListaDespesasActivity : BaseActivity() {
 
     private lateinit var adapter: DespesaAdapter
     private lateinit var controller: ListaDespesasController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_lista_despesas)
+        setContentLayout(R.layout.activity_lista_despesas_content)
 
         controller = ListaDespesasController(this)
 
