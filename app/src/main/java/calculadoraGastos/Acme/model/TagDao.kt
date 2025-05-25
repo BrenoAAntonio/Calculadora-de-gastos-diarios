@@ -2,6 +2,7 @@ package calculadoraGastos.Acme.model
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import android.util.Log
 
 @Dao
 interface TagDao {
@@ -15,7 +16,13 @@ interface TagDao {
     suspend fun delete(tag: Tag)
 
     @Query("SELECT * FROM tags ORDER BY nome ASC")
-    fun getAll(): Flow<List<Tag>>
+    fun getAll(): Flow<List<Tag>> {
+        Log.d("TagDao", "getAll() chamado")
+        return getAllInternal()
+    }
+
+    @Query("SELECT * FROM tags ORDER BY nome ASC")
+    fun getAllInternal(): Flow<List<Tag>>
 
     @Query("SELECT * FROM tags WHERE id = :id")
     suspend fun getById(id: Int): Tag?

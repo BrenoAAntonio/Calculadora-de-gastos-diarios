@@ -14,6 +14,7 @@ import calculadoraGastos.Acme.R
 import calculadoraGastos.Acme.controller.TagController
 import calculadoraGastos.Acme.model.Tag
 import calculadoraGastos.Acme.view.adapters.TagAdapter
+import android.util.Log
 
 class GerenciarTagsActivity : AppCompatActivity() {
 
@@ -57,7 +58,9 @@ class GerenciarTagsActivity : AppCompatActivity() {
         buttonAdicionarTag.setOnClickListener {
             val nomeNovaTag = editTextNovaTag.text.toString().trim()
             if (nomeNovaTag.isNotEmpty()) {
+                Log.d("GerenciarTags", "Botão Adicionar Tag clicado, nome: $nomeNovaTag")
                 tagController.insertTag(nomeNovaTag) { id ->
+                    Log.d("GerenciarTags", "Resultado da inserção da tag '$nomeNovaTag': ID = $id")
                     if (id > 0) {
                         editTextNovaTag.text.clear()
                         Toast.makeText(this, "Tag '$nomeNovaTag' adicionada", Toast.LENGTH_SHORT).show()
@@ -73,6 +76,7 @@ class GerenciarTagsActivity : AppCompatActivity() {
 
     private fun observeTags() {
         tagController.allTags.observe(this) { tags ->
+            Log.d("GerenciarTags", "Tags observadas: ${tags.joinToString { it.nome }}")
             adapter.updateList(tags)
         }
     }

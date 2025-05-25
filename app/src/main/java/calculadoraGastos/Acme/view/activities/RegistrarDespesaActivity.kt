@@ -4,12 +4,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import calculadoraGastos.Acme.R
 import calculadoraGastos.Acme.controller.RegistrarDespesaController
+import calculadoraGastos.Acme.controller.TagController
 import calculadoraGastos.Acme.database.AppDatabase
+import calculadoraGastos.Acme.model.DespesaTag
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,23 +23,30 @@ import java.util.*
 class RegistrarDespesaActivity : AppCompatActivity() {
 
     private lateinit var controller: RegistrarDespesaController
+    private lateinit var tagController: TagController
     private lateinit var edtNomeDespesa: TextInputEditText
     private lateinit var edtValorDespesa: TextInputEditText
     private lateinit var spinnerCategoria: Spinner
-    private val db by lazy { AppDatabase.getDatabase(this).categoriaDao() }
+    private lateinit var chipGroupTags: ChipGroup
+    private val dbCategoria by lazy { AppDatabase.getDatabase(this).categoriaDao() }
+
+    private var listaDeTags = listOf<calculadoraGastos.Acme.model.Tag>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registrar_despesa)
 
         controller = RegistrarDespesaController(this)
+        tagController = TagController(this)
         edtNomeDespesa = findViewById(R.id.edtNomeDespesa)
         edtValorDespesa = findViewById(R.id.edtValorDespesa)
         spinnerCategoria = findViewById(R.id.spinnerCategoria)
+        chipGroupTags = findViewById(R.id.chipGroupTags)
         val btnRegistrarDespesa = findViewById<Button>(R.id.btnRegistrarDespesa)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
         carregarCategorias()
+        carregarTags()
 
         bottomNav.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -59,36 +70,42 @@ class RegistrarDespesaActivity : AppCompatActivity() {
         }
 
         btnRegistrarDespesa.setOnClickListener {
-            val nome = edtNomeDespesa.text.toString().trim()
-            val valorTexto = edtValorDespesa.text.toString().trim()
-            val categoria = spinnerCategoria.selectedItem.toString()
-            val dataAtual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+            lifecycleScope.launch {
+                val nome = edtNomeDespesa.text.toString().trim()
+                val valorTexto = edtValorDespesa.text.toString().trim()
+                val categoria = spinnerCategoria.selectedItem.toString()
+                val dataAtual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+                val selectedTagIds = getSelectedTagIds()
 
-            if (nome.isNotEmpty() && valorTexto.isNotEmpty()) {
-                try {
-                    val valor = valorTexto.toDouble()
-                    controller.registrarDespesa(nome, valor, categoria, dataAtual) {
-                        Toast.makeText(
-                            this@RegistrarDespesaActivity,
-                            "Despesa salva com sucesso!",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        edtNomeDespesa.text?.clear()
-                        edtValorDespesa.text?.clear()
+                if (nome.isNotEmpty() && valorTexto.isNotEmpty()) {
+                    try {
+                        val valor = valorTexto.toDouble()
+                        controller.registrarDespesa(nome, valor, categoria, dataAtual, selectedTagIds) {
+                            launch(Dispatchers.Main) {
+                                Toast.makeText(
+                                    this@RegistrarDespesaActivity,
+                                    "Despesa salva com sucesso!",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                edtNomeDespesa.text?.clear()
+                                edtValorDespesa.text?.clear()
+                                chipGroupTags.clearCheck() // Limpa a seleção de tags
+                            }
+                        }
+                    } catch (e: NumberFormatException) {
+                        Toast.makeText(this@RegistrarDespesaActivity, "Valor inválido", Toast.LENGTH_SHORT).show()
                     }
-                } catch (e: NumberFormatException) {
-                    Toast.makeText(this, "Valor inválido", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@RegistrarDespesaActivity, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun carregarCategorias() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val categoriasDoBanco = db.buscarTodasCategorias()
-            val nomesDasCategorias = categoriasDoBanco.map { it.nome }.toTypedArray()
+        lifecycleScope.launch(Dispatchers.IO) {
+            val categoriasDoBanco = dbCategoria.buscarTodasCategorias()
+            val nomesDasCategorias = categoriasDoBanco.map { categoria -> categoria.nome }.toTypedArray<String>()
             withContext(Dispatchers.Main) {
                 val adapter = ArrayAdapter(
                     this@RegistrarDespesaActivity,
@@ -98,5 +115,36 @@ class RegistrarDespesaActivity : AppCompatActivity() {
                 spinnerCategoria.adapter = adapter
             }
         }
+    }
+
+    private fun carregarTags() {
+        tagController.allTags.observe(this) { tags ->
+            listaDeTags = tags
+            exibirTags(tags)
+        }
+    }
+
+    private fun exibirTags(tags: List<calculadoraGastos.Acme.model.Tag>) {
+        chipGroupTags.removeAllViews()
+        for (tag in tags) {
+            val chip = Chip(this)
+            chip.text = tag.nome
+            chip.isCheckable = true
+            chipGroupTags.addView(chip)
+        }
+    }
+
+    private fun getSelectedTagIds(): List<Int> {
+        val selectedIds = mutableListOf<Int>()
+        for (i in 0 until chipGroupTags.childCount) {
+            val chip = chipGroupTags.getChildAt(i) as Chip
+            if (chip.isChecked) {
+                val tagName = chip.text.toString()
+                listaDeTags.find { it.nome == tagName }?.let {
+                    selectedIds.add(it.id)
+                }
+            }
+        }
+        return selectedIds
     }
 }
