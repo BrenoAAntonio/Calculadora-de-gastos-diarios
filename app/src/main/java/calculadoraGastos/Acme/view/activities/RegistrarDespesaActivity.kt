@@ -9,7 +9,6 @@ import calculadoraGastos.Acme.R
 import calculadoraGastos.Acme.controller.RegistrarDespesaController
 import calculadoraGastos.Acme.controller.TagController
 import calculadoraGastos.Acme.database.AppDatabase
-import calculadoraGastos.Acme.model.DespesaTag
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -69,7 +68,7 @@ class RegistrarDespesaActivity : AppCompatActivity() {
             }
         }
 
-        btnRegistrarDespesa.setOnClickListener {
+        btnRegistrarDespesa.setOnClickListener { view ->
             lifecycleScope.launch {
                 val nome = edtNomeDespesa.text.toString().trim()
                 val valorTexto = edtValorDespesa.text.toString().trim()
@@ -81,6 +80,7 @@ class RegistrarDespesaActivity : AppCompatActivity() {
                     try {
                         val valor = valorTexto.toDouble()
                         controller.registrarDespesa(nome, valor, categoria, dataAtual, selectedTagIds) {
+                            // Tenta usar o contexto da coroutine pai
                             launch(Dispatchers.Main) {
                                 Toast.makeText(
                                     this@RegistrarDespesaActivity,
@@ -89,7 +89,9 @@ class RegistrarDespesaActivity : AppCompatActivity() {
                                 ).show()
                                 edtNomeDespesa.text?.clear()
                                 edtValorDespesa.text?.clear()
-                                chipGroupTags.clearCheck() // Limpa a seleção de tags
+                                chipGroupTags.clearCheck()
+                                startActivity(Intent(this@RegistrarDespesaActivity, MainActivity::class.java))
+                                finish()
                             }
                         }
                     } catch (e: NumberFormatException) {
