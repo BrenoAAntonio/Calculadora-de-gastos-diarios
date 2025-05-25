@@ -10,7 +10,7 @@ import calculadoraGastos.Acme.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import net.objecthunter.exp4j.ExpressionBuilder
 
-class CalculadoraActivity : AppCompatActivity() {
+class CalculadoraActivity : BaseActivity() {
 
     private lateinit var tvOperation: TextView
     private lateinit var tvResult: TextView
@@ -20,7 +20,7 @@ class CalculadoraActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_calculadora)
+        setContentLayout(R.layout.activity_calculadora_content)
 
         tvOperation = findViewById(R.id.tvOperation)
         tvResult = findViewById(R.id.tvResult)
