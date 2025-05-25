@@ -26,11 +26,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.util.Log
 
-class PesquisarDespesasPorTagActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class PesquisarDespesasPorTagActivity : BaseActivity() {
 
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navigationView: NavigationView
-    private lateinit var toolbar: Toolbar
     private lateinit var chipGroupTags: ChipGroup
     private lateinit var rvDespesasFiltradas: RecyclerView
     private lateinit var despesaAdapter: DespesaAdapter
@@ -42,35 +39,14 @@ class PesquisarDespesasPorTagActivity : AppCompatActivity(), NavigationView.OnNa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_pesquisar_despesas_por_tag)
+        setContentLayout(R.layout.activity_pesquisar_despesas_por_tag_content)
 
-        drawerLayout = findViewById(R.id.drawerLayoutPesquisaTag)
-        navigationView = findViewById(R.id.navViewPesquisaTag)
-        toolbar = findViewById(R.id.toolbarPesquisaTag)
         chipGroupTags = findViewById(R.id.chipGroupTags)
         rvDespesasFiltradas = findViewById(R.id.rvDespesasFiltradas)
 
-        setupToolbarAndDrawer()
         setupRecyclerView()
         observeDespesasFiltradas()
         loadTags()
-    }
-
-    private fun setupToolbarAndDrawer() {
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val toggle = ActionBarDrawerToggle(
-            this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-        navigationView.setNavigationItemSelectedListener(this)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
     }
 
     private fun setupRecyclerView() {
@@ -153,30 +129,6 @@ class PesquisarDespesasPorTagActivity : AppCompatActivity(), NavigationView.OnNa
                     ).show()
                 }
             }
-        }
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_add_category -> startActivity(Intent(this, AdicionarCategoriaActivity::class.java))
-            R.id.nav_list_expenses -> startActivity(Intent(this, ListaDespesasActivity::class.java))
-            R.id.nav_calculator -> startActivity(Intent(this, CalculadoraActivity::class.java))
-            R.id.nav_home -> startActivity(Intent(this, MainActivity::class.java))
-            R.id.nav_manage_tags -> startActivity(Intent(this, GerenciarTagsActivity::class.java))
-            R.id.nav_search_tags -> {
-                drawerLayout.closeDrawer(GravityCompat.START)
-                return true
-            }
-        }
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
-    }
-
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
         }
     }
 }
