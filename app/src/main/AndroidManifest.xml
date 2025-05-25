@@ -36,6 +36,10 @@
         <activity android:name=".view.activities.GerenciarTagsActivity" />
 
         <activity android:name=".view.activities.PesquisarDespesasPorTagActivity" />
+
+        <activity android:name=".view.activities.DefinirOrcamentoActivity" />
+
+        <activity android:name=".view.activities.RelatorioOrcamentoActivity" />
     </application>
 
 </manifest>

@@ -6,12 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import calculadoraGastos.Acme.model.*
 
-@Database(entities = [Despesa::class, Categoria::class, Tag::class, DespesaTag::class], version = 4, exportSchema = false)
+@Database(entities = [Despesa::class, Categoria::class, Tag::class, DespesaTag::class, Orcamento::class], version = 5, exportSchema = false) // Incrementamos a versão
 abstract class AppDatabase : RoomDatabase() {
     abstract fun despesaDao(): DespesaDao
     abstract fun categoriaDao(): CategoriaDao
     abstract fun tagDao(): TagDao
     abstract fun despesaTagDao(): DespesaTagDao
+    abstract fun orcamentoDao(): OrcamentoDao
 
     companion object {
         @Volatile

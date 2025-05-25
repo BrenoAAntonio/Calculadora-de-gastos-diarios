@@ -179,11 +179,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_home -> {
             }
-            R.id.nav_manage_tags -> { // Adicione este caso
+            R.id.nav_manage_tags -> {
                 startActivity(Intent(this, GerenciarTagsActivity::class.java))
             }
-            R.id.nav_search_tags -> { // Adicione esta linha para iniciar a nova Activity
+            R.id.nav_search_tags -> {
                 startActivity(Intent(this, PesquisarDespesasPorTagActivity::class.java))
+            }
+            R.id.nav_definir_orcamento -> {
+                startActivity(Intent(this, DefinirOrcamentoActivity::class.java))
+            }
+            R.id.nav_relatorio_orcamento -> {
+                startActivity(Intent(this, RelatorioOrcamentoActivity::class.java))
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
