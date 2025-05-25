@@ -21,7 +21,7 @@ data class OrcamentoComGastos(
     val totalGasto: Double
 )
 
-class RelatorioOrcamentoActivity : AppCompatActivity() {
+class RelatorioOrcamentoActivity : BaseActivity() {
 
     private lateinit var spinnerMes: Spinner
     private lateinit var editTextAno: EditText
@@ -34,9 +34,7 @@ class RelatorioOrcamentoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_relatorio_orcamento)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setContentLayout(R.layout.activity_relatorio_orcamento_content)
 
         spinnerMes = findViewById(R.id.spinnerMesRelatorio)
         editTextAno = findViewById(R.id.editTextAnoRelatorio)
@@ -104,10 +102,5 @@ class RelatorioOrcamentoActivity : AppCompatActivity() {
             return Pair(parts[1].toInt(), parts[2].toInt())
         }
         return Pair(-1, -1)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressedDispatcher.onBackPressed()
-        return true
     }
 }
