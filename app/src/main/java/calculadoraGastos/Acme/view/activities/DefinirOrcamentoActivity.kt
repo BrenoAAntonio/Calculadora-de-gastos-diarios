@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class DefinirOrcamentoActivity : AppCompatActivity() {
+class DefinirOrcamentoActivity : BaseActivity() {
 
     private lateinit var spinnerCategoria: Spinner
     private lateinit var spinnerMes: Spinner
@@ -25,9 +25,7 @@ class DefinirOrcamentoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_definir_orcamento)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setContentLayout(R.layout.activity_definir_orcamento_content)
 
         spinnerCategoria = findViewById(R.id.spinnerCategoriaOrcamento)
         spinnerMes = findViewById(R.id.spinnerMesOrcamento)
@@ -73,7 +71,7 @@ class DefinirOrcamentoActivity : AppCompatActivity() {
 
     private fun salvarOrcamento() {
         val categoriaSelecionada = spinnerCategoria.selectedItem.toString()
-        val mesSelecionado = spinnerMes.selectedItemPosition + 1 // Janeiro é 0
+        val mesSelecionado = spinnerMes.selectedItemPosition + 1
         val anoTexto = editTextAno.text.toString().trim()
         val valorTexto = editTextValor.text.toString().trim()
 
@@ -101,10 +99,5 @@ class DefinirOrcamentoActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressedDispatcher.onBackPressed()
-        return true
     }
 }
